@@ -1,0 +1,30 @@
+name: Update Ski Status
+
+on:
+  schedule:
+    # Se lance toutes les 15 min de 7h45 à 15h45 UTC (8h45 à 16h45 France)
+    - cron: '*/15 7-15 * * *'
+  workflow_dispatch: # Bouton pour lancer manuellement
+
+permissions:
+  contents: write
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: |
+          pip install playwright Pillow pytz
+          playwright install chromium
+
+      - name: Run Scraper Loop
+        run: python scraper.py
